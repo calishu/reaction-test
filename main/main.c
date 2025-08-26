@@ -6,12 +6,13 @@
 #include "driver/gpio.h"
 #include "esp_log.h"
 #include "esp_timer.h"
+#include "freertos/idf_additions.h"
 
 #define TAG "Reaction Test"
 
 #define RED_LED GPIO_NUM_6
 #define GREEN_LED GPIO_NUM_5
-#define BUTTON GPIO_NUM_7
+#define BUTTON GPIO_NUM_8
 #define STOP_BUTTON GPIO_NUM_4
 
 gpio_config_t get_config(gpio_num_t gpio_num)
@@ -38,7 +39,7 @@ void loop()
         if (stop_button_state == 1) stop_action = true;
 
         gpio_set_level(RED_LED, 1);
-        wait(get_random_number(3000, 6000));
+        vTaskDelay(pdMS_TO_TICKS(get_random_number(3000, 6000)));
         gpio_set_level(RED_LED, 0);
 
         int64_t start = esp_timer_get_time();
