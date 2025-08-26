@@ -1,5 +1,6 @@
 #include <stdint.h>
 
+#include "freertos/projdefs.h"
 #include "led.h"
 #include "rng.h"
 
@@ -32,6 +33,9 @@ void loop()
 
     while (stop_action != true)
     {
+        while (gpio_get_level(BUTTON) == 1)
+            vTaskDelay(1);
+
         gpio_set_level(GREEN_LED, 0);
         gpio_set_level(RED_LED, 0);
 
@@ -39,7 +43,16 @@ void loop()
         if (stop_button_state == 1) stop_action = true;
 
         gpio_set_level(RED_LED, 1);
-        vTaskDelay(pdMS_TO_TICKS(get_random_number(3000, 6000)));
+        for (size_t i = 0; i < pdMS_TO_TICKS(get_random_number(3000, 6000)); ++i)
+        {
+            if (gpio_get_level(BUTTON) == 1)
+            {
+                led_blink(RED_LED, 3, 250);
+                ESP_LOGE(TAG, "Clicked too early.");
+                loop(); // reset
+            }
+            vTaskDelay(1);
+        }
         gpio_set_level(RED_LED, 0);
 
         int64_t start = esp_timer_get_time();
