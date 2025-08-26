@@ -58,13 +58,14 @@ void loop()
         int64_t start = esp_timer_get_time();
         gpio_set_level(GREEN_LED, 1);
 
-        while (gpio_get_level(BUTTON) == 0 || (start * 1000) < 2500)
+        while (gpio_get_level(BUTTON) == 0)
         {
             __asm__("nop");
             vTaskDelay(1);
         }
 
-        ESP_LOGI(TAG, "You took a long time ig");
+        int64_t elapsed_time = esp_timer_get_time() - start;
+        ESP_LOGI(TAG, "Your reaction time was %lldms long.", elapsed_time / 1000LL);
     }
 }
 
