@@ -29,9 +29,17 @@ gpio_config_t get_config(gpio_num_t gpio_num)
     return io_conf;
 }
 
+void stop_loop()
+{
+    while (gpio_get_level(STOP_BUTTON) == 0)
+        vTaskDelay(1);
+    stop_action = true;
+    return;
+}
+
 void loop()
 {
-    while (stop_action != true)
+    while (!stop_action)
     {
         while (gpio_get_level(BUTTON) == 1)
             vTaskDelay(1);
@@ -81,5 +89,6 @@ void app_main()
     gpio_config(&button);
     gpio_config(&stop_button);
 
-    loop();
+    xTaskCreate(stop_loop, "Stop Loop", 2048, NULL, 1, NULL);
+    xTaskCreate(loop, "Main Loop", 2048, NULL, 1, NULL);
 }
