@@ -16,6 +16,8 @@
 #define BUTTON GPIO_NUM_8
 #define STOP_BUTTON GPIO_NUM_4
 
+static bool stop_action = false;
+
 gpio_config_t get_config(gpio_num_t gpio_num)
 {
     gpio_config_t io_conf = {
@@ -29,8 +31,6 @@ gpio_config_t get_config(gpio_num_t gpio_num)
 
 void loop()
 {
-    bool stop_action = false;
-
     while (stop_action != true)
     {
         while (gpio_get_level(BUTTON) == 1)
@@ -47,8 +47,8 @@ void loop()
         {
             if (gpio_get_level(BUTTON) == 1)
             {
-                led_blink(RED_LED, 3, 250);
                 ESP_LOGE(TAG, "Clicked too early.");
+                led_blink(RED_LED, 3, 250);
                 loop(); // reset
             }
             vTaskDelay(1);
