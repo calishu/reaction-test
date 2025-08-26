@@ -46,7 +46,10 @@ void loop()
         gpio_set_level(GREEN_LED, 1);
 
         while (gpio_get_level(BUTTON) == 0 || (start * 1000) < 2500)
+        {
             __asm__("nop");
+            vTaskDelay(1);
+        }
 
         ESP_LOGI(TAG, "You took a long time ig");
     }
